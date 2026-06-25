@@ -1,0 +1,6 @@
+nvim/.config/nvim/.git
+.zsh_history
+*.log
+.DS_Store
+.cache/
+.local/
