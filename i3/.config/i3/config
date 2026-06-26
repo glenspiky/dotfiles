@@ -27,7 +27,11 @@ exec_always --no-startup-id killall polybar
 exec_always --no-startup-id ~/.config/polybar/launch.sh
 
 
-exec_always feh --bg-scale ~/.config/backgrounds/nice-blue-background.png
+
+
+exec_always --no-startup-id feh -V --bg-scale ~/.config/backgrounds/nice-blue-background.png
+
+
 bindsym $mod+space exec --no-startup-id rofi -show drun -show-icons combi
 
 exec_always --no-startup-id sh -c 'sleep 3 && /usr/bin/python3 /home/glen/.config/i3/i3-master-stack/i3_master_layout.py'
