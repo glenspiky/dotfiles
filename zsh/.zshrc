@@ -137,3 +137,37 @@ pwd() {
     echo "$dir"
     printf '%s' "$dir" | xclip -selection clipboard
 }
+
+#vim motions
+set -o vi
+bindkey -v
+
+# command mode
+bindkey -M vicmd 'e' beginning-of-line
+bindkey -M vicmd ';' end-of-line
+
+# insert mode
+bindkey '^H' backward-char
+bindkey '^L' forward-char
+bindkey '^J' down-line-or-history
+bindkey '^K' up-line-or-history
+
+
+function vi-jj-escape() {
+  local key
+  read -t 0.3 -k 1 key
+
+  if [[ $key == "j" ]]; then
+    zle vi-cmd-mode
+  else
+    LBUFFER+="j"
+    [[ -n $key ]] && LBUFFER+="$key"
+  fi
+}
+
+zle -N vi-jj-escape
+bindkey -M viins 'j' vi-jj-escape
+
+pwd() {
+  builtin pwd | tee >(xclip -selection clipboard)
+}
