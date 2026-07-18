@@ -10,7 +10,7 @@ vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.undofile = true
 vim.keymap.set("n", "<leader>z", "za", { remap = true })
-vim.keymap.set("n", "e", "0")
+vim.keymap.set("n", "e", "0", { remap = true })
 vim.keymap.set("n", ";", "$")
 -- vim.keymap.set("n", "zR", require("ufo").openAllFolds)
 -- vim.keymap.set("n", "zM", require("ufo").closeAllFolds)
@@ -28,13 +28,23 @@ vim.keymap.set("v", "<", 'c<<C-r>"><Esc>')
 vim.keymap.set("v", '"', 'c"<C-r>""<Esc>')
 vim.keymap.set("v", "'", "c'<C-r>\"'<Esc>")
 vim.keymap.set("v", "`", 'c`<C-r>"`<Esc>')
-
+vim.keymap.set("n", "<leader>ai", "<cmd>TSToolsAddMissingImports<CR>")
+vim.keymap.set("n", "<leader>oi", "<cmd>TSToolsOrganizeImports<CR>")
+vim.keymap.set("n", "<leader>r", function()
+	vim.cmd("w")
+	vim.cmd("!gcc % -o %< && ./%<")
+end)
 vim.opt.wrap = true
 vim.opt.linebreak = true
 vim.opt.breakindent = true
 vim.opt.showbreak = "↳ "
 vim.opt.wildmenu = true
 vim.opt.wildmode = "longest:full,full"
+
+vim.keymap.set("n", "<C-/>", function()
+	vim.cmd("belowright split | terminal")
+	vim.cmd("startinsert")
+end, { desc = "Open terminal below" })
 
 vim.keymap.set("n", "K", function()
 	local diagnostics = vim.diagnostic.get(0, {
@@ -51,11 +61,16 @@ end, { desc = "Hover or diagnostics" })
 vim.diagnostic.config({
 	virtual_text = true,
 	signs = true,
-	underline = true,
+	underline = false,
 	update_in_insert = false,
 	severity_sort = true,
 })
-
+vim.api.nvim_create_autocmd("BufWritePre", {
+	pattern = { "*.ts", "*.tsx" },
+	callback = function()
+		vim.cmd("TSToolsOrganizeImports")
+	end,
+})
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 
 if not vim.loop.fs_stat(lazypath) then
@@ -74,3 +89,10 @@ vim.opt.rtp:prepend(lazypath)
 local opts = {}
 
 require("lazy").setup("plugins")
+
+vim.filetype.add({
+	extension = {
+		prismafile = "prisma", -- Maps .prismafile to the prisma filetype
+		prisma = "prisma", -- Maps regular .prisma files as well
+	},
+})

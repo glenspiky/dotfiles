@@ -148,7 +148,7 @@ bindkey -M vicmd ';' end-of-line
 
 # insert mode
 bindkey '^H' backward-char
-bindkey '^L' forward-char
+bindkey '^L' clear-screen
 bindkey '^J' down-line-or-history
 bindkey '^K' up-line-or-history
 
@@ -171,3 +171,11 @@ bindkey -M viins 'j' vi-jj-escape
 pwd() {
   builtin pwd | tee >(xclip -selection clipboard)
 }
+export PATH="$HOME/go/bin:$PATH"
+
+
+# Generated for pdtm. Do not edit.
+export PATH=$PATH:/home/glen/.pdtm/go/bin
+
+export PATH=$PATH:$HOME/go/bin
+export PATH=$PATH:$HOME/go/bin

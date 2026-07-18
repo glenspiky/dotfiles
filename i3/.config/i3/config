@@ -40,6 +40,8 @@ bindsym $mod+m nop swap master
 bindsym $mod+Shift+m nop go master
 bindsym $mod+Mod1+m nop master toggle
 
+#redshift
+exec --no-startup-id redshift
 
 #screenshot
 
@@ -243,5 +245,5 @@ bindsym $mod+r mode "resize"
 # }
 #
 
-
+# exec_always --no-startup-id setxkbmap -option altwin:swap_alt_win
 
