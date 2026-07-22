@@ -2,6 +2,14 @@ return {
 	"nvim-lualine/lualine.nvim",
 	dependencies = { "nvim-tree/nvim-web-devicons" },
 	config = function()
+		local function macro_recording()
+			local reg = vim.fn.reg_recording()
+			if reg == "" then
+				return ""
+			end
+			return "󰑋 @" .. reg
+		end
+
 		require("lualine").setup({
 			options = {
 				icons_enabled = true,
@@ -17,10 +25,10 @@ return {
 				always_show_tabline = true,
 				globalstatus = true,
 				refresh = {
-					statusline = 1000,
-					tabline = 1000,
-					winbar = 1000,
-					refresh_time = 16, -- ~60fps
+					statusline = 100,
+					tabline = 100,
+					winbar = 100,
+					refresh_time = 16,
 					events = {
 						"WinEnter",
 						"BufEnter",
@@ -35,21 +43,26 @@ return {
 					},
 				},
 			},
+
 			sections = {
 				lualine_a = { "mode" },
 				lualine_b = { "branch", "diff", "diagnostics" },
-				lualine_c = { "filename" },
+				lualine_c = {
+					"filename",
+					macro_recording,
+				},
 				lualine_x = {
 					"fileformat",
 					{
 						"filetype",
 						icon_only = false,
-						icon = { "", align = "left" }, -- Arch logo
+						icon = { "", align = "left" },
 					},
 				},
 				lualine_y = { "progress" },
 				lualine_z = { "location" },
 			},
+
 			inactive_sections = {
 				lualine_a = {},
 				lualine_b = {},
@@ -58,10 +71,18 @@ return {
 				lualine_y = {},
 				lualine_z = {},
 			},
+
 			tabline = {},
 			winbar = {},
 			inactive_winbar = {},
 			extensions = {},
+		})
+
+		-- Refresh lualine when recording starts/stops
+		vim.api.nvim_create_autocmd({ "RecordingEnter", "RecordingLeave" }, {
+			callback = function()
+				require("lualine").refresh()
+			end,
 		})
 	end,
 }
