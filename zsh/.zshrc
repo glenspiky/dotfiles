@@ -179,3 +179,5 @@ export PATH=$PATH:/home/glen/.pdtm/go/bin
 
 export PATH=$PATH:$HOME/go/bin
 export PATH=$PATH:$HOME/go/bin
+alias vim="nvim"
+alias nbeta="NVIM_APPNAME=nvim-beta nvim"
