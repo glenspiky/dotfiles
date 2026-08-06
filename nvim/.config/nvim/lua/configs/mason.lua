@@ -15,5 +15,6 @@ return {
     "bash-language-server",
     "yaml-language-server",
     "marksman",
+    "clangd",
   },
 }

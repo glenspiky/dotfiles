@@ -1,6 +1,22 @@
 require("nvchad.configs.lspconfig").defaults()
 
-require("nvchad.configs.lspconfig").defaults()
+vim.lsp.config("gopls", {
+  settings = {
+    gopls = {
+      semanticTokens = true,
+    },
+  },
+})
+
+vim.lsp.config("basedpyright", {
+  settings = {
+    basedpyright = {
+      analysis = {
+        typeCheckingMode = "standard",
+      },
+    },
+  },
+})
 
 local servers = {
   "lua_ls",
@@ -14,20 +30,20 @@ local servers = {
   "prismals",
   "gopls",
   "rust_analyzer",
-  "pyright",
+  "basedpyright",
   "bashls",
   "yamlls",
   "marksman",
+  "clangd",
 
   -- Formatters
-    "stylua",
-    "prettierd",
-    "prettier",
-    "gofumpt",
-    "goimports",
+  "stylua",
+  "prettierd",
+  "prettier",
+  "gofumpt",
+  "goimports",
 }
-
-vim.lsp.enable(servers)
 vim.lsp.enable(servers)
 
--- read :h vim.lsp.config for changing options of lsp servers 
+-- read :h vim.lsp.config for changing options of lsp servers
+--
