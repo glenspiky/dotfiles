@@ -9,8 +9,6 @@ map("i", "jk", "<ESC>")
 -- Live grep
 map("n", "<leader>ff", "<cmd>Telescope live_grep<CR>", { desc = "Live Grep" })
 
-vim.keymap.set("n", "'", "%", { desc = "Jump to matching bracket" })
-
 map("n", "<leader>n", "<cmd>NvimTreeToggle<CR>", { desc = "Toggle Explorer" }) -- Space Space -> Find files
 
 vim.keymap.set("n", "fl", vim.diagnostic.open_float, { desc = "Line diagnostics" })
@@ -18,7 +16,7 @@ vim.keymap.set("n", "fl", vim.diagnostic.open_float, { desc = "Line diagnostics"
 map("n", "<leader><leader>", "<cmd>Telescope find_files<CR>", { desc = "Find Files" })
 -- map({ "n", "i", "v" }, "<C-s>", "<cmd> w <cr>")
 --
-map("i", "jj", "<Esc>", { desc = "Exit insert mode" })
+map("i", "jf", "<Esc>", { desc = "Exit insert mode" })
 
 map("n", "<leader>ca", function()
   vim.lsp.buf.code_action()
@@ -34,34 +32,41 @@ map({ "n", "v" }, "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true
 -- Dynamic toggle for quote navigation
 local last_direction = "forward"
 
-local function jump_quotes()
+local function jump_pair()
   local line = vim.api.nvim_get_current_line()
   local col = vim.fn.col "."
   local char = line:sub(col, col)
 
-  -- If cursor is on a quote, handle quote bouncing
-  if char:match "['\"`]" then
-    if last_direction == "forward" then
-      local found = vim.fn.search(char, "W", vim.fn.line ".")
-      if found == 0 then
-        vim.fn.search(char, "bW", vim.fn.line ".")
-        last_direction = "backward"
-      end
-    else
-      local found = vim.fn.search(char, "bW", vim.fn.line ".")
-      if found == 0 then
-        vim.fn.search(char, "W", vim.fn.line ".")
-        last_direction = "forward"
-      end
+  -- Quotes
+  if char == '"' or char == "'" or char == "`" then
+    local start_col = col
+
+    -- Search forward for the next matching quote
+    local next_col = line:find(char, col + 1, true)
+
+    if next_col then
+      -- If there is a quote after us, jump to it
+      vim.api.nvim_win_set_cursor(0, { vim.fn.line ".", next_col - 1 })
+      return
+    end
+
+    -- Otherwise search backward
+    local before = line:sub(1, col - 1)
+    local prev_col = before:match(".*()" .. vim.pesc(char))
+
+    if prev_col then
+      vim.api.nvim_win_set_cursor(0, { vim.fn.line ".", prev_col - 1 })
     end
   else
-    -- Standard native Neovim bracket jumping (works perfectly in Normal & Visual)
+    -- Brackets: (), [], {}
     vim.cmd "normal! %"
   end
 end
 
--- Use ' to run the quote function in Normal and Visual modes
-map({ "n", "v" }, "'", jump_quotes, { desc = "Jump between brackets and quotes", silent = true })
+map({ "n", "v" }, "'", jump_pair, {
+  desc = "Jump between brackets and quotes",
+  silent = true,
+})
 
 map("n", "<leader>ft", "<cmd>TailwindFoldToggle<CR>", {
   desc = "Toggle Tailwind Fold",
